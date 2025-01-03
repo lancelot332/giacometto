@@ -250,6 +250,35 @@ data:  # La sezione che contiene i dati effettivi del ConfigMap.
     }  # Fine del contenuto JSON.
 
 ```
+### NetworkPolicy
+Una NetworkPolicy consente di definire regole che controllano l'accesso al traffico di rete a livello di pod, e si applica al traffico in entrata (ingress) e in uscita (egress).
+```yaml
+apiVersion: networking.k8s.io/v1  # La versione dell'API di Kubernetes che definisce la risorsa NetworkPolicy
+kind: NetworkPolicy  # Tipo di risorsa, in questo caso una NetworkPolicy che regola il traffico di rete tra i pod
+metadata:
+  name: my-network-policy  # Nome della NetworkPolicy, utilizzato per identificarla nel cluster
+  namespace: my-namespace  # Namespace in cui la NetworkPolicy viene applicata (si applica solo ai pod di questo namespace)
+spec:
+  podSelector:  # Selettore di pod che definisce quali pod sono influenzati dalla policy
+    matchLabels:  # Etichette utilizzate per selezionare i pod
+      app: my-app  # Seleziona i pod che hanno l'etichetta "app: my-app"
+  ingress:  # Regole che definiscono come i traffici in ingresso devono essere gestiti
+  - from:  # La regola si applica a tutte le fonti che soddisfano queste condizioni
+    - podSelector:  # Selettore di pod che definisce quali pod possono inviare traffico ai pod selezionati
+        matchLabels:  # Etichette per selezionare i pod di origine
+          role: frontend  # Solo i pod con l'etichetta "role: frontend" possono inviare traffico in ingresso
+    ports:  # Elenco delle porte a cui è permesso il traffico in ingresso
+    - protocol: TCP  # Specifica il protocollo, in questo caso TCP
+      port: 80  # Solo il traffico sulla porta 80 è permesso in ingresso
+  egress:  # Regole che definiscono come i traffici in uscita devono essere gestiti
+  - to:  # La regola si applica a tutte le destinazioni che soddisfano queste condizioni
+    - podSelector:  # Selettore di pod che definisce a quali pod i traffici in uscita possono essere inviati
+        matchLabels:  # Etichette per selezionare i pod di destinazione
+          role: backend  # Solo i pod con l'etichetta "role: backend" possono ricevere traffico in uscita
+    ports:  # Elenco delle porte a cui è permesso il traffico in uscita
+    - protocol: TCP  # Specifica il protocollo, in questo caso TCP
+      port: 443  # Solo il traffico sulla porta 443 è permesso in uscita
+```
 ### DaemonSet
 risorsa che assicura che una copia di un pod sia eseguita su ogni nodo
 ```yaml
