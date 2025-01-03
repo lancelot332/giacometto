@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: web-dev-eu-rs
+  labels:
+    environment: dev
+    app: web
+    region: EU
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      environment: dev
+      app: web
+      region: EU
+  template:
+    metadata:
+      labels:
+        environment: dev
+        app: web
+        region: EU
+    spec:
+      containers:
+      - name: flask-app
+        image: nginx:latest
+        ports:
+        - containerPort: 5000
+

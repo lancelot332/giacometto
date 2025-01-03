@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-dev-eu-service
+  labels:
+    environment: dev
+    app: web
+    region: EU
+spec:
+  type: LoadBalancer
+  selector:
+    environment: dev
+    app: web
+    region: EU
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 5000
+
