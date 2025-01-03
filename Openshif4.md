@@ -250,3 +250,36 @@ data:  # La sezione che contiene i dati effettivi del ConfigMap.
     }  # Fine del contenuto JSON.
 
 ```
+### DaemonSet
+risorsa che assicura che una copia di un pod sia eseguita su ogni nodo
+```yaml
+apiVersion: apps/v1  # Versione dell'API di Kubernetes/OpenShift utilizzata per creare il DaemonSet
+kind: DaemonSet  # Tipo di risorsa, in questo caso un DaemonSet
+metadata:
+  name: nginx-daemonset  # Nome del DaemonSet
+  namespace: my-namespace  # Namespace in cui creare il DaemonSet
+spec:
+  selector:
+    matchLabels:
+      app: nginx-daemon  # Etichetta per il selettore dei pod
+  template:
+    metadata:
+      labels:
+        app: nginx-daemon  # Etichetta da applicare ai pod creati dal DaemonSet
+    spec:
+      containers:
+      - name: nginx  # Nome del container
+        image: nginx:latest  # Immagine del container (nginx)
+        ports:
+        - containerPort: 80  # Porta esposta dal container
+      securityContext:
+        runAsUser: 1000  # Utente con cui il container viene eseguito (importante per rispettare le SCC in OpenShift)
+        runAsGroup: 1000  # Gruppo con cui il container viene eseguito (importante per rispettare le SCC in OpenShift)
+      tolerations:  # Permette ai pod di essere schedulati su nodi con taints specifici
+      - key: "node-role.kubernetes.io/master"  # Chiave del taint per i nodi master
+        operator: "Exists"  # Operatore per verificare se esiste il taint
+        effect: "NoSchedule"  # Effetto del taint: il pod non sarà schedulato su nodi master a meno che non abbia una toleration
+  updateStrategy:
+    type: RollingUpdate  # Strategia di aggiornamento dei pod (rolling update)
+  terminationGracePeriodSeconds: 30  # Tempo di grace (in secondi) per la terminazione dei pod
+```
