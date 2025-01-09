@@ -1,0 +1,30 @@
+- name: install podman on all host
+  package:
+    name: "podman"
+    state: present
+
+- name: Pull haproxy image on soufe1
+  containers.podman.podman_image:
+    name: docker.io/haproxy
+
+- name: Create directory for haproxy
+  file:
+    path: "/etc/haproxy"
+    state: directory
+
+- name: Template a file to /etc/haproxy.cfg
+  ansible.builtin.template:
+    src: /Users/lorenzomoro/modulo_pazzo/roles/templates/haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+    owner: vagrant
+
+- name: Create container podman
+  containers.podman.podman_container:
+    name: HAProxy2
+    image: haproxy
+    state: started
+    volumes:
+      - "/etc/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg"
+    ports:
+      - "80:80"
+      - "443:443"

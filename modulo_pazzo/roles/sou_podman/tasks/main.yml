@@ -1,0 +1,5 @@
+- include_tasks: soufe1.yml
+  when: "'soufe1' in group_names"
+
+- include_tasks: soufe2.yml
+  when: "'soufe2' in group_names"

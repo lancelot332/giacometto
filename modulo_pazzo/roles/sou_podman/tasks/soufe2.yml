@@ -1,0 +1,25 @@
+- name: install podman on all host
+  package:
+    name: "podman"
+    state: present
+  become: true
+
+- name: pull prom
+  containers.podman.podman_image:
+    name: docker.io/prom/prometheus
+
+- name: create container prom
+  containers.podman.podman_container:
+    name: prom
+    image: prom/prometheus
+    state: started
+
+- name: pull graf
+  containers.podman.podman_image:
+    name: docker.io/grafana/grafana
+
+- name: create container graf
+  containers.podman.podman_container:
+    name: graf
+    image: grafana/grafana
+    state: started
